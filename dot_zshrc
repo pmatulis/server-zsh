@@ -1,0 +1,248 @@
+setopt inc_append_history share_history extended_history hist_ignore_all_dups histfindnodups hist_expire_dups_first hist_reduce_blanks
+setopt autocd nobeep nomatch notify correct complete_aliases noclobber normstarsilent 
+zstyle :compinstall filename '~/.zshrc'
+fpath=( ~/.zsh/functions $fpath )
+autoload -Uz compinit && compinit
+autoload -U zmv
+autoload colors && colors
+
+# Run 'ls' upon entering (cd) a directory
+autoload -U add-zsh-hook; chpwd_ls () { ls -Flhtr --color=auto --time-style=long-iso }; add-zsh-hook chpwd chpwd_ls
+
+bindkey -v
+bindkey -a "?" vi-history-search-backward
+bindkey -M viins '^[[A' up-line-or-history
+
+# colorized man pages
+# see: http://boredzo.org/blog/?p=1655 and https://goo.gl/HTRRox
+    # blue (38;5;75m)
+    # white (1;37m)
+    # yellow (38;5;226m)
+man() {
+    LESS_TERMCAP_md=$'\e'"[38;5;75m" \
+    LESS_TERMCAP_me=$'\e'"[0m" \
+    LESS_TERMCAP_se=$'\e'"[0m" \
+    LESS_TERMCAP_so=$'\e'"[38;5;226m" \
+    LESS_TERMCAP_ue=$'\e'"[0m" \
+    LESS_TERMCAP_us=$'\e'"[1;37m" \
+    command man "$@"
+}
+
+# If vim is suspended (Ctrl-z), this will make Ctrl-z on CLI resume it again
+# even if you have something underway on the CLI (ie. no need to erase to use 'fg')
+foreground-vi() {
+	  fg %vi
+  }
+  zle -N foreground-vi
+  bindkey '^Z' foreground-vi
+
+# kill command completion
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:*:kill:*' list-colors '=%*=01;31'
+zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -A -o pid,user,cmd'
+
+# Completion with arrows menu
+zstyle ':completion:*' menu select
+
+# Auto-rehash
+zstyle ':completion:*' rehash true
+
+# With autocd option enabled, give preference to directory names (over command names)
+# This isn't very good. I still need to do '$ ./ls' to go into dir 'ls'
+zstyle ':completion:*:-command-::' group-order local-directories
+
+##
+# Functions
+
+## _words-from-tmux
+#
+# Auto-completion from tmux elements (panes, windows, session, server)
+# https://www.0x50.de/fterbeck/zsh/blob/master/functions/_words-from-tmux
+# See ~/.zshfunctions
+
+ctxt=':completion:words-from-tmux'
+for i in pane window; do
+    zle -C words-from-tmux-$i-anywhere complete-word _generic
+    zstyle "$ctxt-$i-anywhere:*" completer _words-from-tmux
+done
+zstyle "$ctxt-*:*" ignore-line current
+zstyle "$ctxt-*:*" menu yes select
+zstyle "$ctxt-*-anywhere:*" matcher-list 'b:=*'
+zstyle "$ctxt-*:*" capture-options -J -E - -S -
+zstyle "$ctxt-*:*" pre-trim-pattern '[<"'\''`‘]##'
+zstyle "$ctxt-*:*" post-trim-pattern '[>."'\''’]##'
+zstyle "$ctxt-*:*" trim-pattern '[\\]'
+unset i ctxt
+
+bindkey '\ep' words-from-tmux-pane-anywhere             # Alt-p
+bindkey '\ew' words-from-tmux-window-anywhere           # Alt-w
+# 
+### _words-from-tmux
+
+##
+# Global aliases
+
+alias -g G='| grep -i'			# normal, case insensitive grep (use after |)
+alias -g IG='| grep -iv'		# inverse, case insensitive grep (use after |)
+alias -g SG='grep -v -e "^\\$" -e "^#"'	# short grep (no blank or commented lines)
+alias -g D='\$(date +%Y-%m-%d)'		# insert the current date: YYYY-MM-DD
+
+##
+# Normal aliases
+
+# Upgrade packages
+alias upgrade='sudo apt update && sudo apt full-upgrade'
+
+# Access some files
+#alias vi='vim -u ~/.vim/dot_vimrc'
+#alias vizshrc='vi ~/.zshrc'
+#alias vivimrc='vi ~/.vim/dot_vimrc'
+alias vi='vim'
+alias vizshrc='vi ~/.zshrc'
+alias vivimrc='vi ~/.vimrc'
+
+# Command history
+alias zhist_30='fc -li -30'
+alias zhist_10000='fc -li -10000'
+alias zhist_grep='fc -li 0 | grep' 
+
+alias ps='ps axuf'
+alias cal='cal -3'
+alias dirs='dirs -v'
+alias ...='../..'
+
+# Shutdown the computer.  see /etc/sudoers; no password required
+alias off='sudo /sbin/poweroff'
+alias reboot='sudo /sbin/reboot'
+
+# This is what I do with lsof 99% of the time anyway
+alias lsof='sudo lsof -i4 -nP'
+
+# Source .zshrc
+alias srczshrc='source ~/.zshrc'
+
+# Make a backup of a file
+bk() {
+	cp -a "$1" "${1}_$(date --iso-8601=seconds)"
+}
+
+# df human readable and show type
+alias df='df -hT'
+
+# tree; give an overview of the directory structure
+alias tree='tree -C -L 2'
+
+# bazaar
+alias bzr_log='bzr log --forward'
+
+# preferred ls settings
+alias ls='ls -Flhtr --color=auto --time-style=long-iso'
+alias la='ls -aAFlhtr --color=auto --time-style=long-iso'
+alias lc='ls --color=auto -C'
+alias ll='ls -Flhtr --color=auto --time-style=long-iso'
+
+# candoctools - bzr
+alias getcandoctools='gotobzr; bzr branch lp:canonical-doc-tools candoctools; cd candoctools; bzr pull --remember lp:canonical-doc-tools; bzr push --remember lp:canonical-doc-tools'
+alias gotocandoctools='cd ~/bzr/candoctools'
+alias pushcandoctools='(gotocandoctools; bzr add; bzr commit -m "ongoing"; bzr push)'
+alias pullcandoctools='(gotocandoctools; bzr pull)'
+
+# scripts - bzr
+alias getscripts='cd ~/bzr; bzr branch lp:pmatulis-scripts scripts; cd scripts; bzr pull --remember lp:pmatulis-scripts; bzr push --remember lp:pmatulis-scripts'
+alias gotoscripts='cd ~/bzr/scripts'
+alias pushscripts='(gotoscripts; bzr add; bzr commit -m "ongoing"; bzr push)'
+alias pullscripts='(gotoscripts; bzr pull)'
+
+# wiki - bzr
+alias getwiki='cd ~/bzr; bzr branch lp:pmatulis-wiki wiki; cd wiki; bzr pull --remember lp:pmatulis-wiki; bzr push --remember lp:pmatulis-wiki'
+alias gotowiki='cd ~/bzr/wiki'
+alias pushwiki='(gotowiki; bzr add; bzr commit -m "ongoing"; bzr push)'
+alias pullwiki='(gotowiki; bzr pull)'
+
+alias gotodocs='gotowiki; cd docs'
+
+#####
+# Writer's aliases
+alias gotojujudocs='cd ~/git/pmatulis_juju-docs'
+alias gotomaasdocs='cd ~/git/pmatulis_maas-docs'
+alias gotolandscapedocs='cd ~/git/pmatulis_landscape-docs'
+
+alias gotojujudocs-files='cd ~/git/pmatulis_juju-docs/src/en'
+alias gotosmaasdocs-files='cd ~/git/pmatulis_maas-docs/en'
+alias gotolandscapedocs-files='cd ~/git/pmatulis_landscape-docs/en'
+
+alias gotoirclogs='cd ~/.weechat/logs/2017'
+alias gotowiki='cd ~/bzr/wiki'
+alias vigit='vi ~/bzr/wiki/docs/other/git.txt'
+alias vipadt='vi ~/bzr/wiki/padt.txt'
+alias gotobzr='cd ~/bzr'
+alias gotogit='cd ~/git'
+alias gotobackporting='cd ~/git/backporting'
+
+alias fixsshagent='eval $(tmux show-environment -s SSH_AUTH_SOCK)'
+alias dbentr-maas='ls en/* metadata.yaml | entr /snap/bin/documentation-builder'
+alias dbentr-juju='ls src/en/* src/navigation.tpl | entr /usr/bin/make'
+
+alias backporter='fixsshagent; canonical-doc-utils.backport -u pmatulis -p 0ccc29b35675ff54377717d20ffed5934b00509f'
+#
+#####
+
+###### End of aliases
+
+HISTFILE=~/.zhistory
+HISTSIZE=100000
+SAVEHIST=100000
+LISTMAX=0
+TERM=xterm-256color
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
+
+# BEGIN PROMPT ----------------------------------------
+setopt prompt_subst
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' actionformats \
+    '%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f '
+zstyle ':vcs_info:*' formats       \
+        "%{$fg_bold[white]%}%s: %b"
+zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
+zstyle ':vcs_info:*' enable git cvs svn
+
+# or use pre_cmd, see man zshcontrib
+vcs_info_wrapper() {
+  vcs_info
+  if [ -n "$vcs_info_msg_0_" ]; then
+    echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
+  fi
+}
+
+NEWLINE=$'\n'
+VCS=$'$(vcs_info_wrapper)'
+
+PROMPT="
+%{$fg_bold[green]%}%m [%~] %{$reset_color%}% ${VCS}${NEWLINE}"
+# END PROMPT ----------------------------------------
+
+export EDITOR="vi"
+export PAGER="less"
+
+# This might be for a cloud, and specifically STS Stack
+if [ -f ~/novarc ]
+	then source ~/novarc
+	if grep stsstack ~/novarc >/dev/null
+		then PATH=\$PATH:~/scripts/sstack
+	fi
+fi
+
+# or DreamCompute
+if [ -f ~/.dreamcompute/novarc ]
+        then source ~/.dreamcompute/novarc
+fi
+
+# Make a backup of a file
+bk() {
+	cp -a "\$1" "\${1}_\$(date --iso-8601=seconds)"
+}
+
+# Print a separator banner
+function hr {
+	print \${(l:COLUMNS::=:)}
+}

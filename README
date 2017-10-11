@@ -1,0 +1,21 @@
+For details see https://gist.github.com/manasthakur/d4dc9a610884c60d944a4dd97f0b3560
+
+# central zsh setup
+ 
+## preliminaries
+ 
+mkdir ~/.zsh
+cp .zshrc_good ~/.zsh/dot_zshrc 
+ln -s ~/.zsh/dot_zshrc ~/.zshrc
+
+On github.com, create project such as
+https://github.com/pmatulis/server-zsh
+
+## initial data
+ 
+cd ~/.zsh
+git init
+vi README
+git add *
+git commit -m "initial commit"
+git remote add origin git@github.com:pmatulis/server-zsh
