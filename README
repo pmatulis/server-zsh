@@ -19,3 +19,4 @@ vi README
 git add *
 git commit -m "initial commit"
 git remote add origin git@github.com:pmatulis/server-zsh
+git push -u origin master
