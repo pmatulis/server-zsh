@@ -94,9 +94,6 @@ alias -g D='\$(date +%Y-%m-%d)'		# insert the current date: YYYY-MM-DD
 alias upgrade='sudo apt update && sudo apt full-upgrade'
 
 # Access some files
-#alias vi='vim -u ~/.vim/dot_vimrc'
-#alias vizshrc='vi ~/.zshrc'
-#alias vivimrc='vi ~/.vim/dot_vimrc'
 alias vi='vim'
 alias vizshrc='vi ~/.zshrc'
 alias vivimrc='vi ~/.vimrc'
