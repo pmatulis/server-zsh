@@ -111,7 +111,7 @@ alias cal='cal -3'
 alias dirs='dirs -v'
 alias ...='../..'
 
-# Shutdown the computer.  see /etc/sudoers; no password required
+# Shutdown the computer. See /etc/sudoers; no password required
 alias off='sudo /sbin/poweroff'
 alias reboot='sudo /sbin/reboot'
 
@@ -182,8 +182,6 @@ alias gotobackporting='cd ~/git/backporting'
 alias fixsshagent='eval $(tmux show-environment -s SSH_AUTH_SOCK)'
 alias dbentr-maas='ls en/* metadata.yaml | entr /snap/bin/documentation-builder'
 alias dbentr-juju='ls src/en/* src/navigation.tpl | entr /usr/bin/make'
-
-alias backporter='fixsshagent; canonical-doc-utils.backport -u pmatulis -p 0ccc29b35675ff54377717d20ffed5934b00509f'
 #
 #####
 
