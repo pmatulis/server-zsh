@@ -91,7 +91,7 @@ alias -g D='\$(date +%Y-%m-%d)'		# insert the current date: YYYY-MM-DD
 # Normal aliases
 
 # Upgrade packages
-alias upgrade='sudo apt update && sudo apt full-upgrade'
+alias upgrade='sudo apt update && sudo apt full-upgrade && sudo apt autoremove'
 
 # Access some files
 alias vi='vim'
@@ -163,6 +163,7 @@ alias gotodocs='gotowiki; cd docs'
 alias gotojujudocs='cd ~/git/pmatulis_juju-docs'
 alias gotomaasdocs='cd ~/git/pmatulis_maas-docs'
 alias gotolandscapedocs='cd ~/git/pmatulis_landscape-docs'
+alias gotoducdocs='cd ~/git/pmatulis_docs-ubuntu-com-docs'
 
 alias gotojujudocs-files='cd ~/git/pmatulis_juju-docs/src/en'
 alias gotosmaasdocs-files='cd ~/git/pmatulis_maas-docs/en'
@@ -177,8 +178,12 @@ alias gotogit='cd ~/git'
 alias gotobackporting='cd ~/git/backporting'
 
 alias fixsshagent='eval $(tmux show-environment -s SSH_AUTH_SOCK)'
-alias dbentr-maas='ls en/* metadata.yaml | entr /snap/bin/documentation-builder'
-alias dbentr-juju='ls src/en/* src/navigation.tpl | entr /usr/bin/make'
+
+# Start in the root of the repository
+alias dbentr-maas='ls en/* | entr documentation-builder'
+alias dbentr-juju='ls src/en/*.md src/en/media/*.png | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
+#alias dbentr-juju='ls src/en/*.md src/navigation.tpl | entr /usr/bin/make'
+
 #
 #####
 
@@ -189,7 +194,7 @@ HISTSIZE=100000
 SAVEHIST=100000
 LISTMAX=0
 TERM=xterm-256color
-PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
 
 # BEGIN PROMPT ----------------------------------------
 setopt prompt_subst
