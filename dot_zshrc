@@ -58,13 +58,15 @@ zstyle ':completion:*:-command-::' group-order local-directories
 #
 # Auto-completion from tmux elements (panes, windows, session, server)
 # https://www.0x50.de/fterbeck/zsh/blob/master/functions/_words-from-tmux
-# See ~/.zshfunctions
+# See ~/.zsh/functions
 
 ctxt=':completion:words-from-tmux'
-for i in pane window; do
-    zle -C words-from-tmux-$i-anywhere complete-word _generic
-    zstyle "$ctxt-$i-anywhere:*" completer _words-from-tmux
-done
+#for i in pane window; do
+    #zle -C words-from-tmux-$i-anywhere complete-word _generic
+    #zstyle "$ctxt-$i-anywhere:*" completer _words-from-tmux
+    zle -C words-from-tmux-pane-anywhere complete-word _generic
+    zstyle "$ctxt-pane-anywhere:*" completer _words-from-tmux
+#done
 zstyle "$ctxt-*:*" ignore-line current
 zstyle "$ctxt-*:*" menu yes select
 zstyle "$ctxt-*-anywhere:*" matcher-list 'b:=*'
@@ -75,7 +77,7 @@ zstyle "$ctxt-*:*" trim-pattern '[\\]'
 unset i ctxt
 
 bindkey '\ep' words-from-tmux-pane-anywhere             # Alt-p
-bindkey '\ew' words-from-tmux-window-anywhere           # Alt-w
+#bindkey '\ew' words-from-tmux-window-anywhere           # Alt-w
 # 
 ### _words-from-tmux
 
@@ -164,6 +166,7 @@ alias gotojujudocs='cd ~/git/pmatulis_juju-docs'
 alias gotomaasdocs='cd ~/git/pmatulis_maas-docs'
 alias gotolandscapedocs='cd ~/git/pmatulis_landscape-docs'
 alias gotoducdocs='cd ~/git/pmatulis_docs-ubuntu-com-docs'
+alias gototutorials='cd ~/git/pmatulis_tutorials'
 
 alias gotojujudocs-files='cd ~/git/pmatulis_juju-docs/src/en'
 alias gotosmaasdocs-files='cd ~/git/pmatulis_maas-docs/en'
@@ -178,6 +181,8 @@ alias gotogit='cd ~/git'
 alias gotobackporting='cd ~/git/backporting'
 
 alias fixsshagent='eval $(tmux show-environment -s SSH_AUTH_SOCK)'
+
+alias githead='grep -r HEA * IG htmld IG build IG media IG run IG HEALTH'
 
 # Start in the root of the repository
 alias dbentr-maas='ls en/* | entr documentation-builder'
