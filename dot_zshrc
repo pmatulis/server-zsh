@@ -99,6 +99,7 @@ alias upgrade='sudo apt update && sudo apt full-upgrade && sudo apt autoremove'
 alias vi='vim'
 alias vizshrc='vi ~/.zshrc'
 alias vivimrc='vi ~/.vimrc'
+alias vidstackcreate='vi ~/bzr/scripts/dstack/dstack-create.sh'
 
 # Command history
 alias zhist_30='fc -li -30'
@@ -146,6 +147,8 @@ alias gotocandoctools='cd ~/bzr/candoctools'
 alias pushcandoctools='(gotocandoctools; bzr add; bzr commit -m "ongoing"; bzr push)'
 alias pullcandoctools='(gotocandoctools; bzr pull)'
 
+alias gotoimp='gotocandoctools; cd dstack/imp'
+
 # scripts - bzr
 alias getscripts='cd ~/bzr; bzr branch lp:pmatulis-scripts scripts; cd scripts; bzr pull --remember lp:pmatulis-scripts; bzr push --remember lp:pmatulis-scripts'
 alias gotoscripts='cd ~/bzr/scripts'
@@ -172,7 +175,7 @@ alias gotojujudocs-files='cd ~/git/pmatulis_juju-docs/src/en'
 alias gotosmaasdocs-files='cd ~/git/pmatulis_maas-docs/en'
 alias gotolandscapedocs-files='cd ~/git/pmatulis_landscape-docs/en'
 
-alias gotoirclogs='cd ~/.weechat/logs/2017'
+alias gotoirclogs='cd ~/.weechat/logs/2018'
 alias gotowiki='cd ~/bzr/wiki'
 alias vigit='vi ~/bzr/wiki/docs/other/git.txt'
 alias vipadt='vi ~/bzr/wiki/padt.txt'
@@ -186,7 +189,7 @@ alias githead='grep -r HEA * IG htmld IG build IG media IG run IG HEALTH'
 
 # Start in the root of the repository
 alias dbentr-maas='ls en/* | entr documentation-builder'
-alias dbentr-juju='ls src/en/*.md src/en/media/*.png | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
+alias dbentr-juju='ls src/en/*.md src/en/metadata.yaml src/en/media/*.png | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
 #alias dbentr-juju='ls src/en/*.md src/navigation.tpl | entr /usr/bin/make'
 
 #
