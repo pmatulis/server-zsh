@@ -165,6 +165,7 @@ alias gotodocs='gotowiki; cd docs'
 
 #####
 # Writer's aliases
+alias gotojujusrc='cd ~/gopath/src/github.com/juju/juju'
 alias gotojujudocs='cd ~/git/pmatulis_juju-docs'
 alias gotomaasdocs='cd ~/git/pmatulis_maas-docs'
 alias gotolandscapedocs='cd ~/git/pmatulis_landscape-docs'
@@ -181,7 +182,7 @@ alias vigit='vi ~/bzr/wiki/docs/other/git.txt'
 alias vipadt='vi ~/bzr/wiki/padt.txt'
 alias gotobzr='cd ~/bzr'
 alias gotogit='cd ~/git'
-alias gotobackporting='cd ~/git/backporting'
+alias gotobackporting='cd ~/backporting'
 
 alias fixsshagent='eval $(tmux show-environment -s SSH_AUTH_SOCK)'
 
@@ -190,8 +191,8 @@ alias githead='grep -r HEA * IG htmld IG build IG media IG run IG HEALTH'
 # Start in the root of the repository
 alias dbentr-maas='ls en/* | entr documentation-builder'
 #alias dbentr-juju='ls src/en/*.md src/en/metadata.yaml src/en/media/*.png | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
-alias dbentr-juju='ls src/en/*.md src/en/metadata.yaml | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
 #alias dbentr-juju='ls src/en/*.md src/navigation.tpl | entr /usr/bin/make'
+alias dbentr-juju='ls src/en/*.md src/en/metadata.yaml | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
 
 #
 #####
@@ -203,7 +204,8 @@ HISTSIZE=100000
 SAVEHIST=100000
 LISTMAX=0
 TERM=xterm-256color
-PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
+GOPATH=~/gopath
+PATH=$GOPATH/bin:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
 
 # BEGIN PROMPT ----------------------------------------
 setopt prompt_subst
@@ -255,3 +257,5 @@ bk() {
 function hr {
 	print \${(l:COLUMNS::=:)}
 }
+
+eval `dircolors ~/.dir_colors`
