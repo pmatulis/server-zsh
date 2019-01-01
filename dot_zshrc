@@ -51,11 +51,19 @@ zstyle ':completion:*' rehash true
 # This isn't very good. I still need to do '$ ./ls' to go into dir 'ls'
 zstyle ':completion:*:-command-::' group-order local-directories
 
-##
-# Functions
+export EDITOR="vi"
+export PAGER="less"
 
-## _words-from-tmux
-#
+HISTFILE=~/.zhistory
+HISTSIZE=100000
+SAVEHIST=100000
+LISTMAX=0
+TERM=xterm-256color
+GOPATH=~/gopath
+PATH=$GOPATH/bin:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
+
+# BEGIN _words-from-tmux ----------------------------------------
+
 # Auto-completion from tmux elements (panes, windows, session, server)
 # https://www.0x50.de/fterbeck/zsh/blob/master/functions/_words-from-tmux
 # See ~/.zsh/functions
@@ -78,20 +86,19 @@ unset i ctxt
 
 bindkey '\ep' words-from-tmux-pane-anywhere             # Alt-p
 #bindkey '\ew' words-from-tmux-window-anywhere           # Alt-w
-# 
-### _words-from-tmux
 
-##
-# Global aliases
+# END _words-from-tmux ----------------------------------------
 
+
+# BEGIN global aliases ----------------------------------------
 alias -g G='| grep -i'			# normal, case insensitive grep (use after |)
 alias -g IG='| grep -iv'		# inverse, case insensitive grep (use after |)
 alias -g SG='grep -v -e "^\\$" -e "^#"'	# short grep (no blank or commented lines)
 alias -g D='\$(date +%Y-%m-%d)'		# insert the current date: YYYY-MM-DD
+# END global aliases ----------------------------------------
 
-##
-# Normal aliases
 
+# BEGIN normal aliases ----------------------------------------
 # Upgrade packages
 alias upgrade='sudo apt update && sudo apt full-upgrade && sudo apt autoremove'
 
@@ -120,11 +127,6 @@ alias lsof='sudo lsof -i4 -nP'
 
 # Source .zshrc
 alias srczshrc='source ~/.zshrc'
-
-# Make a backup of a file
-bk() {
-	cp -a "$1" "${1}_$(date --iso-8601=seconds)"
-}
 
 # df human readable and show type
 alias df='df -hT'
@@ -163,8 +165,11 @@ alias pullwiki='(gotowiki; bzr pull)'
 
 alias gotodocs='gotowiki; cd docs'
 
-#####
-# Writer's aliases
+# BEGIN normal aliases ----------------------------------------
+
+
+# BEGIN writer's aliases ----------------------------------------
+
 alias gotojujusrc='cd ~/gopath/src/github.com/juju/juju'
 alias gotojujudocs='cd ~/git/pmatulis_juju-docs'
 alias gotomaasdocs='cd ~/git/pmatulis_maas-docs'
@@ -194,18 +199,28 @@ alias dbentr-maas='ls en/* | entr documentation-builder'
 #alias dbentr-juju='ls src/en/*.md src/navigation.tpl | entr /usr/bin/make'
 alias dbentr-juju='ls src/en/*.md src/en/metadata.yaml | entr documentation-builder --source-folder src --media-path src/en/media --output-media-path build/en/media'
 
-#
-#####
+# END writer's aliases ----------------------------------------
 
-###### End of aliases
 
-HISTFILE=~/.zhistory
-HISTSIZE=100000
-SAVEHIST=100000
-LISTMAX=0
-TERM=xterm-256color
-GOPATH=~/gopath
-PATH=$GOPATH/bin:/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:~/bin:~/bzr/scripts:~/bzr/scripts/git:~/bzr/scripts/dstack:~/.local/bin:/snap/bin:.
+
+# BEGIN 256 COLOURS ----------------------------------------
+typeset -AHg FX FG BG
+
+FX=(
+    reset     "%{[00m%}"
+    bold      "%{[01m%}" no-bold      "%{[22m%}"
+    italic    "%{[03m%}" no-italic    "%{[23m%}"
+    underline "%{[04m%}" no-underline "%{[24m%}"
+    blink     "%{[05m%}" no-blink     "%{[25m%}"
+    reverse   "%{[07m%}" no-reverse   "%{[27m%}"
+)
+
+for color in {000..255}; do
+    FG[$color]="%{[38;5;${color}m%}"
+    BG[$color]="%{[48;5;${color}m%}"
+done
+# END 256 COLOURS ----------------------------------------
+
 
 # BEGIN PROMPT ----------------------------------------
 setopt prompt_subst
@@ -229,11 +244,11 @@ NEWLINE=$'\n'
 VCS=$'$(vcs_info_wrapper)'
 
 PROMPT="
-%{$fg_bold[green]%}%m [%~] %{$reset_color%}% ${VCS}${NEWLINE}"
+$FG[208]%m [%~]%{$reset_color%} ${VCS}${NEWLINE}"
+#%{$fg_bold[green]%}%m [%~] %{$reset_color%}% ${VCS}${NEWLINE}"
+#$FG[099]%m [%~]%{$reset_color%} ${VCS}${NEWLINE}"
 # END PROMPT ----------------------------------------
 
-export EDITOR="vi"
-export PAGER="less"
 
 # This might be for a cloud, and specifically STS Stack
 if [ -f ~/novarc ]
@@ -248,14 +263,5 @@ if [ -f ~/.dreamcompute/novarc ]
         then source ~/.dreamcompute/novarc
 fi
 
-# Make a backup of a file
-bk() {
-	cp -a "\$1" "\${1}_\$(date --iso-8601=seconds)"
-}
-
-# Print a separator banner
-function hr {
-	print \${(l:COLUMNS::=:)}
-}
-
+# Colours for ls
 eval `dircolors ~/.dir_colors`
